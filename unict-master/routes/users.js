@@ -111,26 +111,8 @@ router.put('/addfavorites/:id1/:id2', autenticationMiddleware.isAuth, function(r
   });
 });
 
-//rimuovi preferito
-/*router.put('/removefavorites/:id1/:id2', autenticationMiddleware.isAuth, function(req, res, next) {
-  if (res.locals.authInfo.userId !== req.params.id1) {
-    return res.status(401).json({
-      error: "Unauthorized",
-      message: "You are not the owner of the resource"
-    });
-  }
-  User.findOne({_id: req.params.id1})
-    .exec(function(err, user) {
-      if(err) return res.status(500).json({error: err});
-      if(!user) return res.status(404).json({message: 'User non found'});
-      User.favorites.remove({_id: req.params.id2}, function(err) {
-        if(err) return res.status(500).json({error: err})
-        res.json({message: 'Favorite successfully deleted'})
-      });
-    });
-});*/
 
-//aggiungi ai preferiti
+//rimuovi preferito
 router.put('/removefavorites/:id1/:id2', autenticationMiddleware.isAuth, function(request, response, next) {
   if (response.locals.authInfo.userId !== request.params.id1) {
     return response.status(401).json({
