@@ -93,14 +93,14 @@ checkValidation, function(req, res, next) {
         message: "You are not the owner of the resource"
       });
     }
-    console.log(req.params.id);
-   tweet.update({id:req.params.id},{$inc:{likes:1}}),
+   
+   //tweet.update({_id: 'req.params.id'},{ $inc: { likes: 1 } });
+  tweet.findOneAndUpdate({_id: 'req.params.id'}, {$inc: { likes: 1 }});
   
   //  tweet.save(function(err) {
   //   if(err) return res.status(500).json({error: err});
-    //res.json(tweet);
-    res.json(req.params.id);
-  //  });
+    res.json(tweet);
+  
   });
 });
 
