@@ -42,6 +42,21 @@ router.post('/',autenticationMiddleware.isAuth, [
   });
 });
 
+router.post('/createcomment',autenticationMiddleware.isAuth, [
+  check('tweet').isString().isLength({min: 1, max: 120}),
+  //check('parent_tweet').exists({ checkNull: true })
+  check('parent_tweet').isString()
+], checkValidation, function(req, res, next) {
+  const newTweet = new Tweet(req.body);
+  newTweet._author = res.locals.authInfo.userId;
+  newTweet.save(function(err){
+    if(err) {
+      return res.status(500).json({error: err});
+    } 
+    res.status(201).json(newTweet);
+  });
+});
+
 //visualizzazione commenti
 router.get('/showcomments/:id', function(req, res, next) {
  // Tweet.findOne({_id: req.params.id})
