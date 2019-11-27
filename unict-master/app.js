@@ -19,7 +19,7 @@ mongoose.connect('mongodb://'+ host + '/' + dbName);
 
 const db = mongoose.connection;
 db.on('error', function() {
-  console.error('Connection error!'
+  console.error('Connection error!')
 });
 db.once('open', function() {
   console.log('DB connection Ready');
