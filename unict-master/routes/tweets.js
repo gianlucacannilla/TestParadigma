@@ -9,9 +9,12 @@ const { checkValidation } = require('../middlewares/validation');
 
 
 router.get('/', function(req, res, next) {
-  Tweet.find().populate("_author", "-password").exec(function(err, tweets){
+  var T = Tweet.find({parent_tweet:null}).exec(function(err, tweets)
+  
+
+  /*Tweet.find().populate("_author", "-password").exec(function(err, tweets)*/{
     if (err) return res.status(500).json({error: err});
-    res.json(tweets);
+    res.json(T);
   });
 });
 
@@ -25,14 +28,13 @@ router.get('/:id', function(req, res, next) {
     });
 });
 
+//crea tweet
 router.post('/',autenticationMiddleware.isAuth, [
   check('tweet').isString().isLength({min: 1, max: 120}),
   //check('parent_tweet').exists({ checkNull: true })
-/*
-
-*/
 ], checkValidation, function(req, res, next) {
   const newTweet = new Tweet(req.body);
+  
   newTweet._author = res.locals.authInfo.userId;
   newTweet.save(function(err){
     if(err) {
@@ -42,10 +44,11 @@ router.post('/',autenticationMiddleware.isAuth, [
   });
 });
 
+//crea commenti
 router.post('/createcomment',autenticationMiddleware.isAuth, [
   check('tweet').isString().isLength({min: 1, max: 120}),
   //check('parent_tweet').exists({ checkNull: true })
-  check('parent_tweet').isString()
+  check('parent_tweet').isString()//non è necessario il controllo perchè c'è già un vincolo d'integrità lato front end
 ], checkValidation, function(req, res, next) {
   const newTweet = new Tweet(req.body);
   newTweet._author = res.locals.authInfo.userId;
@@ -69,6 +72,35 @@ router.get('/showcomments/:id', function(req, res, next) {
     });
 });
 
+//mettere like
+router.put('/like/:id', autenticationMiddleware.isAuth,
+ checkValidation, function(req, res, next) {
+  Tweet.findOne({_id: req.params.id}).exec(function(err, tweet) {
+    if (err) {
+      return res.status(500).json({
+        error: err,
+        message: "Error reading the tweet"
+      });
+    }
+    if (!tweet) {
+      return res.status(404).json({
+        message: "Tweet not found"
+      })
+    }
+    if (tweet._author.toString() !== res.locals.authInfo.userId) {
+      return res.status(401).json({
+        error: "Unauthorized",
+        message: "You are not the owner of the resource"
+      });
+    }
+    tweet.tweet = req.body.tweet;
+    tweet.update({$inc:{likes:}})
+    tweet.save(function(err) {
+      if(err) return res.status(500).json({error: err});
+      res.json(tweet);
+    });
+  });
+});
 
 router.put('/:id', autenticationMiddleware.isAuth, [
   check('tweet').isString().isLength({min: 1, max: 120})
