@@ -88,4 +88,69 @@ router.delete('/:id', autenticationMiddleware.isAuth, function(req, res, next) {
     });
 });
 
+//aggiungi ai preferiti
+router.put('/addfavorites/:id1/:id2', autenticationMiddleware.isAuth, function(request, response, next) {
+  if (response.locals.authInfo.userId !== request.params.id1) {
+    return response.status(401).json({
+      error: "Unauthorized",
+      message: "You are not the owner of the resource"
+    });
+  }
+  User.findOne({_id: request.params.id1})
+  .exec(function(err, user) {
+    if(err) return response.status(500).json({error:err});
+    if(!user) return response.status(404).json({message: 'User not found'})
+    for(key in request.body) {
+      user[key] = request.body[key];
+    }
+    user.favorites.push(request.params.id2); 
+    user.save(function(err) {
+      if(err) return response.status(500).json({error: err});
+      response.json(user);
+    });
+  });
+});
+
+//rimuovi preferito
+/*router.put('/removefavorites/:id1/:id2', autenticationMiddleware.isAuth, function(req, res, next) {
+  if (res.locals.authInfo.userId !== req.params.id1) {
+    return res.status(401).json({
+      error: "Unauthorized",
+      message: "You are not the owner of the resource"
+    });
+  }
+  User.findOne({_id: req.params.id1})
+    .exec(function(err, user) {
+      if(err) return res.status(500).json({error: err});
+      if(!user) return res.status(404).json({message: 'User non found'});
+      User.favorites.remove({_id: req.params.id2}, function(err) {
+        if(err) return res.status(500).json({error: err})
+        res.json({message: 'Favorite successfully deleted'})
+      });
+    });
+});*/
+
+//aggiungi ai preferiti
+router.put('/removefavorites/:id1/:id2', autenticationMiddleware.isAuth, function(request, response, next) {
+  if (response.locals.authInfo.userId !== request.params.id1) {
+    return response.status(401).json({
+      error: "Unauthorized",
+      message: "You are not the owner of the resource"
+    });
+  }
+  User.findOne({_id: request.params.id1})
+  .exec(function(err, user) {
+    if(err) return response.status(500).json({error:err});
+    if(!user) return response.status(404).json({message: 'User not found'})
+    for(key in request.body) {
+      user[key] = request.body[key];
+    }
+    user.favorites.pull(request.params.id2); 
+    user.save(function(err) {
+      if(err) return response.status(500).json({error: err});
+      response.json(user);
+    });
+  });
+});
+
 module.exports = router;
