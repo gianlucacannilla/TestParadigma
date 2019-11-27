@@ -8,13 +8,6 @@ const autenticationMiddleware = require('../middlewares/auth');
 const { checkValidation } = require('../middlewares/validation');
 
 
-router.get('/', function(req, res, next) {
-  Tweet.find({parent_tweet: null}).populate("_author", "-password").exec(function(err,tweets)
-  /*Tweet.find().populate("_author", "-password").exec(function(err, tweets)*/{
-    if (err) return res.status(500).json({error: err});
-    res.json(tweets);
-  });
-});
 
 router.get('/:id', function(req, res, next) {
   Tweet.findOne({_id: req.params.id})
@@ -58,6 +51,15 @@ router.post('/createcomment',autenticationMiddleware.isAuth, [
   });
 });
 
+//Ritorna tutti i tweet
+router.get('/', function(req, res, next) {
+  Tweet.find({parent_tweet: null}).populate("_author", "-password").exec(function(err,tweets)
+  /*Tweet.find().populate("_author", "-password").exec(function(err, tweets)*/{
+    if (err) return res.status(500).json({error: err});
+    res.json(tweets);
+  });
+});
+
 //visualizzazione commenti
 router.get('/showcomments/:id', function(req, res, next) {
  // Tweet.findOne({_id: req.params.id})
@@ -68,6 +70,38 @@ router.get('/showcomments/:id', function(req, res, next) {
       if(!tweet) return res.status(404).json({message: 'Tweet not found'})
       res.json(tweet);
     });
+});
+
+//mettere like
+router.put('/addlike/:id', autenticationMiddleware.isAuth, 
+checkValidation, function(req, res, next) {
+  Tweet.findOne({_id: req.params.id}).exec(function(err, tweet) {
+    if (err) {
+      return res.status(500).json({
+        error: err,
+        message: "Error reading the tweet"
+      });
+    }
+    if (!tweet) {
+      return res.status(404).json({
+        message: "Tweet not found"
+      })
+    }
+    if (tweet._author.toString() !== res.locals.authInfo.userId) {
+      return res.status(401).json({
+        error: "Unauthorized",
+        message: "You are not the owner of the resource"
+      });
+    }
+    console.log(req.params.id);
+   tweet.update({id:req.params.id},{$inc:{likes:1}}),
+  
+  //  tweet.save(function(err) {
+  //   if(err) return res.status(500).json({error: err});
+    //res.json(tweet);
+    res.json(req.params.id);
+  //  });
+  });
 });
 
 router.put('/:id', autenticationMiddleware.isAuth, [
@@ -99,6 +133,8 @@ router.put('/:id', autenticationMiddleware.isAuth, [
   });
 });
 
+
+
 router.delete('/:id', autenticationMiddleware.isAuth, function(req, res, next) {
   Tweet.findOne({_id: req.params.id}).exec(function(err, tweet) {
     if (err) {
@@ -126,5 +162,6 @@ router.delete('/:id', autenticationMiddleware.isAuth, function(req, res, next) {
     });
   });
 });
+
 
 module.exports = router;
