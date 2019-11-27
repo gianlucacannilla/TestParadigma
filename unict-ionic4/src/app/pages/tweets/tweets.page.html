@@ -1,0 +1,59 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>tweets</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-list>
+    
+    <ion-card *ngFor="let tweet of tweets" >
+        <ion-card-header  (click)="openComments(tweet)">
+          <p style="font-size:10px;">{{ tweet.created_at | unictDate: 1 }}</p>
+          <ion-card-title>{{tweet.tweet}}</ion-card-title> 
+          <ion-card-subtitle *ngIf="tweet._author; else userDeleted" class="user" [class.me]="canEdit(tweet)">{{getAuthor(tweet)}}
+            <ion-icon *ngIf="canEdit(tweet)" name="heart" color="danger-tint"></ion-icon>
+          </ion-card-subtitle>
+          <ng-template #userDeleted>
+            <p class="user-deleted">User deleted</p>
+          </ng-template>
+          
+        </ion-card-header>
+        <ion-card-content>
+            <ion-grid>
+                <ion-row>
+                  <ion-col>
+                      <ion-button expand="full" fill="clear" class="unpressed">
+                          <ion-icon slot="icon-only" name="heart"></ion-icon>
+                        </ion-button>                      
+                  </ion-col>
+                  <ion-col>
+                      <ion-button expand="full" fill="clear" class="unpressed" >
+                          <ion-icon slot="icon-only" name="star"></ion-icon>
+                        </ion-button>                     
+                  </ion-col>
+                  <ion-col>
+                      <ion-button expand="full" fill="clear"  *ngIf="canEdit(tweet)" class="unpressed" (click)="createOrEditTweet(tweet)">
+                          <ion-icon slot="icon-only" name="create"></ion-icon>
+                      </ion-button>      
+                  </ion-col>
+                  <ion-col>
+                      <ion-button expand="full" fill="clear" *ngIf="canEdit(tweet)" class="unpressed" (click)="deleteTweet(tweet)">
+                          <ion-icon slot="icon-only" name="trash"></ion-icon>
+                      </ion-button>      
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+        </ion-card-content>     
+    </ion-card>
+
+  </ion-list>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="createOrEditTweet()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+</ion-content>
