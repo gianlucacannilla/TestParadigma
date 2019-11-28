@@ -25,10 +25,9 @@ router.post('/',autenticationMiddleware.isAuth, [
   //check('parent_tweet').exists({ checkNull: true })
 ], checkValidation, function(req, res, next) {
   const newTweet = new Tweet(req.body);
-  
   newTweet._author = res.locals.authInfo.userId;
   //storia 4: inserisci gli hashtag nell'array hashtags
-  newTweet.hashtags = newTweet.tweet.match(/#[a-z]+/gi);
+  newTweet.hashtags = newTweet.tweet.match(/#[a-z-0-9]+/gi);
   newTweet.save(function(err){
     if(err) {
       return res.status(500).json({error: err});
@@ -61,6 +60,7 @@ router.get('/', function(req, res, next) {
     res.json(tweets);
   });
 });
+
 
 //visualizzazione commenti
 router.get('/showcomments/:id', function(req, res, next) {
@@ -145,6 +145,7 @@ router.get('/showlikes/:id', function(req, res, next) {
        res.json(tweet.likes.toString());
      });
  });
+
 
 router.put('/:id', autenticationMiddleware.isAuth, [
   check('tweet').isString().isLength({min: 1, max: 120})
