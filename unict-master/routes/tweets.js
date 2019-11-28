@@ -64,7 +64,7 @@ router.get('/', function(req, res, next) {
 router.get('/showcomments/:id', function(req, res, next) {
  // Tweet.findOne({_id: req.params.id})
  Tweet.find({parent_tweet:req.params.id})
-    //.populate("_author", "-password")
+    .populate("_author", "-password")
     .exec(function(err, tweet){
       if (err) return res.status(500).json({error: err});
       if(!tweet) return res.status(404).json({message: 'Tweet not found'})
