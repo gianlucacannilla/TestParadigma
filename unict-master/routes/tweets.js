@@ -147,8 +147,8 @@ router.get('/showlikes/:id', function(req, res, next) {
  });
 
   //ricerca tweet tramite hashtag  
-  router.get('/showtweetsbytag/:id', function(req, res, next) {
-  Tweet.find({hashtags:req.params.id})
+  router.post('/showtweetsbytag/', function(req, res, next) {
+  Tweet.find({hashtags:req.body.hashtags})
        .populate("_author", "-password")
        .exec(function(err, tweet){
          //if (err) return res.status(500).json({error: err});
