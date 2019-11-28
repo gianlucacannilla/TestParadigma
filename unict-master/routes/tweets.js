@@ -146,6 +146,17 @@ router.get('/showlikes/:id', function(req, res, next) {
      });
  });
 
+  //ricerca tweet tramite hashtag  
+  router.get('/showtweetsbytag/:id', function(req, res, next) {
+    Tweet.find({hashtags:req.params.id})
+       .populate("_author", "-password")
+       .exec(function(err, tweet){
+         if (err) return res.status(500).json({error: err});
+         if(!tweet) return res.status(404).json({message: 'Tweet not found'})
+         res.json(tweet);
+       });
+   });
+
 router.put('/:id', autenticationMiddleware.isAuth, [
   check('tweet').isString().isLength({min: 1, max: 120})
 ], checkValidation, function(req, res, next) {
