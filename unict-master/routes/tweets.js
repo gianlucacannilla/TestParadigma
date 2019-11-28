@@ -74,10 +74,10 @@ router.get('/showcomments/:id', function(req, res, next) {
     });
 });
 
-//mettere like
-router.put('/addlike/:id', autenticationMiddleware.isAuth, 
+//mettere like ,id1-> tweet ,id2->utente loggato
+router.put('/addlike/:id1/:id2', autenticationMiddleware.isAuth, 
 checkValidation, function(req, res, next) {
-  Tweet.findOne({_id: req.params.id}).exec(function(err, tweet) {
+  Tweet.findOne({_id: req.params.id1}).exec(function(err, tweet) {
     if (err) {
       return res.status(500).json({
         error: err,
@@ -97,6 +97,8 @@ checkValidation, function(req, res, next) {
     }
    
    tweet.likes =  tweet.likes + 1;
+   tweet.users_likes.push(req.params.id2);
+   
    //tweet.update({_id: req.params.id},{ $inc: { likes: 1 } });
    tweet.save(function(err) {
     if(err) return res.status(500).json({error: err});
@@ -105,10 +107,10 @@ checkValidation, function(req, res, next) {
   });
 });
 
-//rimuovi like
-router.put('/removelike/:id', autenticationMiddleware.isAuth, 
+//rimuovi like,id1-> tweet ,id2->utente loggato
+router.put('/removelike/:id1/:id2', autenticationMiddleware.isAuth, 
 checkValidation, function(req, res, next) {
-  Tweet.findOne({_id: req.params.id}).exec(function(err, tweet) {
+  Tweet.findOne({_id: req.params.id1}).exec(function(err, tweet) {
     if (err) {
       return res.status(500).json({
         error: err,
@@ -128,6 +130,7 @@ checkValidation, function(req, res, next) {
     }
    
    tweet.likes =  tweet.likes - 1;
+   tweet.users_likes.pull(req.params.id2);
    //tweet.update({_id: req.params.id},{ $inc: { likes: 1 } });
    tweet.save(function(err) {
     if(err) return res.status(500).json({error: err});
@@ -157,6 +160,8 @@ router.get('/showlikes/:id', function(req, res, next) {
          res.json(tweet);
        })
    });
+
+   
 
 router.put('/:id', autenticationMiddleware.isAuth, [
   check('tweet').isString().isLength({min: 1, max: 120})
