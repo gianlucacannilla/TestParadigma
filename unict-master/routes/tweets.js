@@ -27,6 +27,8 @@ router.post('/',autenticationMiddleware.isAuth, [
   const newTweet = new Tweet(req.body);
   
   newTweet._author = res.locals.authInfo.userId;
+  //storia 4: inserisci gli hashtag nell'array hashtags
+  newTweet.hashtags = newTweet.tweet.match(/#[a-z]+/gi);
   newTweet.save(function(err){
     if(err) {
       return res.status(500).json({error: err});
