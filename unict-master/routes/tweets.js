@@ -28,7 +28,7 @@ router.post('/',autenticationMiddleware.isAuth, [
   
   newTweet._author = res.locals.authInfo.userId;
   //storia 4: inserisci gli hashtag nell'array hashtags
-  newTweet.hashtags = newTweet.tweet.match(/#[a-z]+/gi);
+  newTweet.hashtags = newTweet.tweet.match(/#[a-z-0-9]+/gi);
   newTweet.save(function(err){
     if(err) {
       return res.status(500).json({error: err});
@@ -148,13 +148,14 @@ router.get('/showlikes/:id', function(req, res, next) {
 
   //ricerca tweet tramite hashtag  
   router.get('/showtweetsbytag/:id', function(req, res, next) {
-    Tweet.find({hashtags:req.params.id})
+  Tweet.find({hashtags:req.params.id})
        .populate("_author", "-password")
        .exec(function(err, tweet){
-         if (err) return res.status(500).json({error: err});
+         //if (err) return res.status(500).json({error: err});
+         if (err) return res.send(req.param).json({error: err});
          if(!tweet) return res.status(404).json({message: 'Tweet not found'})
          res.json(tweet);
-       });
+       })
    });
 
 router.put('/:id', autenticationMiddleware.isAuth, [
