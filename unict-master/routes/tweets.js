@@ -88,13 +88,7 @@ checkValidation, function(req, res, next) {
         message: "Tweet not found"
       })
     }
-    /*if (tweet._author.toString() !== res.locals.authInfo.userId) {
-      return res.status(401).json({
-        error: "Unauthorized",
-        message: "You are not the owner of the resource"
-      });
-    }*/
-   
+  
    tweet.likes =  tweet.likes + 1;
    tweet.users_likes.push(req.params.id2);
    
@@ -121,12 +115,6 @@ checkValidation, function(req, res, next) {
         message: "Tweet not found"
       })
     }
-    /*if (tweet._author.toString() !== res.locals.authInfo.userId) {
-      return res.status(401).json({
-        error: "Unauthorized",
-        message: "You are not the owner of the resource"
-      });
-    }*/
    
    tweet.likes =  tweet.likes - 1;
    tweet.users_likes.pull(req.params.id2);
@@ -163,12 +151,6 @@ checkValidation, function(req, res, next) {
         message: "Tweet not found"
       })
     }
-    /*if (tweet._author.toString() !== res.locals.authInfo.userId) {
-      return res.status(401).json({
-        error: "Unauthorized",
-        message: "You are not the owner of the resource"
-      });
-    }*/
    
    tweet.favorites =  tweet.favorites + 1;
    tweet.users_favorites.push(req.params.id2);
@@ -197,13 +179,7 @@ checkValidation, function(req, res, next) {
         message: "Tweet not found"
       })
     }
-    /*if (tweet._author.toString() !== res.locals.authInfo.userId) {
-      return res.status(401).json({
-        error: "Unauthorized",
-        message: "You are not the owner of the resource"
-      });
-    }*/
-   
+    
    tweet.favorites =  tweet.favorites - 1;
    tweet.users_favorites.pull(req.params.id2);
    //tweet.update({_id: req.params.id},{ $inc: { likes: 1 } });
