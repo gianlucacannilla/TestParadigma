@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Tweet } from 'src/app/interfaces/tweet';
+import { Tweet, Like, Favorite } from 'src/app/interfaces/tweet';
 import { TweetsService } from 'src/app/services/tweets/tweets.service';
 import { ModalController } from '@ionic/angular';
 import { NewTweetPage } from '../new-tweet/new-tweet.page';
@@ -19,6 +19,9 @@ export class TweetsPage implements OnInit {
   tweets: Tweet[] = [];
   commentTweets : Tweet [] = [];
   principalTweets : Tweet [] = [];
+  like  = {} as Like;
+  favorite = {} as Favorite;
+  flag :  boolean;
 
   constructor(
     private tweetsService: TweetsService,
@@ -29,35 +32,10 @@ export class TweetsPage implements OnInit {
   ) { }
 
   async ngOnInit() {
-
     // Quando carico la pagina, riempio il mio array di Tweets
-    await this.getPrincipalTweets();
-
+    await this.getTweets();
   }
-  async getPrincipalTweets() {
-
-    try {
-
-      // Avvio il loader
-      await this.uniLoader.show();
-
-      // Popolo il mio array di oggetti 'Tweet' con quanto restituito dalla chiamata API
-      this.principalTweets = await this.tweetsService.getPrincipalTweets(); 
-
-      // La chiamata è andata a buon fine, dunque rimuovo il loader
-      await this.uniLoader.dismiss();
-
-    } catch (err) {
-
-      // Nel caso la chiamata vada in errore, mostro l'errore in un toast
-      await this.toastService.show({
-        message: err.message,
-        type: ToastTypes.ERROR
-      });
-
-    }
-
-  }
+ 
   async getTweets() {
 
     try {
@@ -67,6 +45,8 @@ export class TweetsPage implements OnInit {
 
       // Popolo il mio array di oggetti 'Tweet' con quanto restituito dalla chiamata API
       this.tweets = await this.tweetsService.getTweets(); 
+
+      console.log(this.tweets);
 
       // La chiamata è andata a buon fine, dunque rimuovo il loader
       await this.uniLoader.dismiss();
@@ -194,5 +174,139 @@ export class TweetsPage implements OnInit {
     */
 
   }
+  async putLike(tweet : Tweet){
+
+    this.like.tweetId = tweet._id;
+    this.like.userId = this.auth.me._id;
+
+    try {
+
+      await this.tweetsService.addLike(this.like);
+      await this.getTweets();
+
+    } catch (err) {
+
+      // Nel caso la chiamata vada in errore, mostro l'errore in un toast
+      await this.toastService.show({
+        message: err.message,
+        type: ToastTypes.ERROR
+      });
+
+    }
+  }
+
+  async removeLike(tweet : Tweet){
+
+    this.like.tweetId = tweet._id;
+    this.like.userId = this.auth.me._id;
+
+    try {
+
+      await this.tweetsService.deleteLike(this.like);
+      await this.getTweets();
+
+    } catch (err) {
+
+      // Nel caso la chiamata vada in errore, mostro l'errore in un toast
+      await this.toastService.show({
+        message: err.message,
+        type: ToastTypes.ERROR
+      });
+
+    }
+  }
+  
+  async pressLike(tweet : Tweet){
+
+    this.isLiked(tweet) ?  this.removeLike(tweet) : this.putLike(tweet);
+    
+    
+  }
+  
+  isLiked(tweet: Tweet): boolean {
+   
+    this.flag = false;
+
+   tweet.users_likes.forEach(element => {
+      if (element == this.auth.me._id){
+        this.flag = true;
+        return;
+      } 
+   });
+
+   return this.flag;
+    
+  }
+
+
+/// Gestione dei Preferiti ///
+
+async putFavorite(tweet : Tweet){
+
+  this.favorite.tweetId = tweet._id;
+  this.favorite.userId = this.auth.me._id;
+
+  try {
+
+    await this.tweetsService.addFavorite(this.favorite);
+    await this.getTweets();
+
+  } catch (err) {
+
+    // Nel caso la chiamata vada in errore, mostro l'errore in un toast
+    await this.toastService.show({
+      message: err.message,
+      type: ToastTypes.ERROR
+    });
+
+  }
+}
+
+async removeFavorite(tweet : Tweet){
+
+  this.favorite.tweetId = tweet._id;
+  this.favorite.userId = this.auth.me._id;
+
+  try {
+
+    await this.tweetsService.deleteFavorite(this.favorite);
+    await this.getTweets();
+
+  } catch (err) {
+
+    // Nel caso la chiamata vada in errore, mostro l'errore in un toast
+    await this.toastService.show({
+      message: err.message,
+      type: ToastTypes.ERROR
+    });
+
+  }
+}
+
+async pressFavorite(tweet : Tweet){
+
+  this.isFavorite(tweet) ?  this.removeFavorite(tweet) : this.putFavorite(tweet);
+  
+  
+}
+
+isFavorite(tweet: Tweet): boolean {
+ 
+  this.flag = false;
+
+ tweet.users_favorites.forEach(element => {
+    if (element == this.auth.me._id){
+      this.flag = true;
+      return;
+    } 
+ });
+
+ return this.flag;
+  
+}
+
+
+
+
 
 }
