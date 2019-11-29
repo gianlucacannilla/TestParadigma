@@ -8,6 +8,7 @@ const User = require('../models/user');
 const autenticationMiddleware = require('../middlewares/auth');
 const { checkValidation } = require('../middlewares/validation');
 
+//ritornare tutti gli utenti (senza password)
 router.get('/', function(req, res, next) {
   User.find({}, "-password", function(err, users){
     if (err) return res.status(500).json({error: err});
@@ -15,6 +16,7 @@ router.get('/', function(req, res, next) {
   });
 });
 
+//ritornare un utente (senza password)
 router.get('/:id', function(req, res, next) {
   User.findOne({_id: req.params.id}, "-password", function(err, user){
     if (err) return res.status(500).json({error: err});
@@ -23,6 +25,7 @@ router.get('/:id', function(req, res, next) {
   });
 });
 
+//creare un utente
 router.post('/', [
   check('name').isString(),
   check('surname').isString(),
@@ -49,6 +52,7 @@ router.post('/', [
   });
 });
 
+//aggiornare un utente
 router.put('/:id', autenticationMiddleware.isAuth, function(request, response, next) {
   if (response.locals.authInfo.userId !== request.params.id) {
     return response.status(401).json({
@@ -70,6 +74,7 @@ router.put('/:id', autenticationMiddleware.isAuth, function(request, response, n
   });
 });
 
+//eliminare un utente
 router.delete('/:id', autenticationMiddleware.isAuth, function(req, res, next) {
   if (res.locals.authInfo.userId !== req.params.id) {
     return res.status(401).json({
@@ -88,7 +93,7 @@ router.delete('/:id', autenticationMiddleware.isAuth, function(req, res, next) {
     });
 });
 
-//aggiungi ai preferiti
+//aggiungere un tweet nei preferiti
 router.put('/addfavorites/:id1/:id2', autenticationMiddleware.isAuth, function(request, response, next) {
   if (response.locals.authInfo.userId !== request.params.id1) {
     return response.status(401).json({
@@ -112,7 +117,7 @@ router.put('/addfavorites/:id1/:id2', autenticationMiddleware.isAuth, function(r
 });
 
 
-//rimuovi preferito
+//rimuovere un tweet dai preferiti
 router.put('/removefavorites/:id1/:id2', autenticationMiddleware.isAuth, function(request, response, next) {
   if (response.locals.authInfo.userId !== request.params.id1) {
     return response.status(401).json({

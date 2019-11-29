@@ -9,10 +9,12 @@ const { check } = require('express-validator');
 const { checkValidation } = require('../middlewares/validation');
 const { JWT_SECRET, isAuth } = require('../middlewares/auth');
 
+//Sono vivo? :)
 router.get('/', function(req, res) {
   res.json({message: "I'm alive"});
 });
 
+//login utente
 router.post('/login', [
   check('email').isEmail(),
   check('password').isString().isLength({ min: 5 })
@@ -39,6 +41,7 @@ router.post('/login', [
   });
 });
 
+//Chi sono? :)
 router.get("/me", isAuth, function(req, res) {
   User.findOne({_id: res.locals.authInfo.userId}, "-password")
   .exec(function(err, user) {
