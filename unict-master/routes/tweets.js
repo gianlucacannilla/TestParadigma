@@ -105,6 +105,38 @@ checkValidation, function(req, res, next) {
    });
   });
 });
+//aggiungere un like ,id1-> tweet ,id2->utente loggato
+router.put('/addlike/:id1/:id2', autenticationMiddleware.isAuth, 
+checkValidation, function(req, res, next) {
+  Tweet.findOne({_id: req.params.id1}).exec(function(err, tweet) {
+    if (err) {
+      return res.status(500).json({
+        error: err,
+        message: "Error reading the tweet"
+      });
+    }
+    if (!tweet) {
+      return res.status(404).json({
+        message: "Tweet not found"
+      })
+    }
+    if (tweet._author.toString() !== res.locals.authInfo.userId) {
+      return res.status(401).json({
+        error: "Unauthorized",
+        message: "You are not the owner of the resource"
+      });
+    }
+   tweet.likes =  tweet.likes + 1;
+   tweet.users_likes.push(req.params.id2);
+   
+   //tweet.update({_id: req.params.id},{ $inc: { likes: 1 } });
+   tweet.save(function(err) {
+    if(err) return res.status(500).json({error: err});
+    res.json(tweet);
+   });
+  });
+});
+
 
 //mostrare tutti i like di un tweet
 router.get('/showlikes/:id', function(req, res, next) {
