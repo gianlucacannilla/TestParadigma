@@ -162,15 +162,31 @@ checkValidation, function(req, res, next) {
       return res.status(404).json({
         message: "Tweet not found"
       })
-    }
-   
+    } 
    tweet.favorites =  tweet.favorites + 1;
-   tweet.users_favorites.push(req.params.id2);
-   
+   tweet.users_favorites.push(req.params.id2);    
    //tweet.update({_id: req.params.id},{ $inc: { likes: 1 } });
    tweet.save(function(err) {
     if(err) return res.status(500).json({error: err});
     res.json(tweet);
+   });
+  });
+  User.findOne({_id: req.params.id2}).exec(function(err, user) {
+    if (err) {
+      return res.status(500).json({
+        error: err,
+        message: "Error reading the user"
+      });
+    }
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found"
+      })
+    } 
+   user.favorites.push(req.params.id1);    
+   user.save(function(err) {
+    if(err) return res.status(500).json({error: err});
+    res.json(user);
    });
   });
 });
