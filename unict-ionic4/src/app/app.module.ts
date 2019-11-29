@@ -20,6 +20,8 @@ import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { Vibration } from '@ionic-native/vibration/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { CommentsPageModule } from './pages/comments/comments.module';
+import { FavoritesPageModule } from './pages/favorites/favorites.module';
+import { SearchPageModule } from './pages/search/search.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -30,7 +32,8 @@ import { CommentsPageModule } from './pages/comments/comments.module';
     AppRoutingModule,
     HttpClientModule,
     NewTweetPageModule,
-    CommentsPageModule
+    CommentsPageModule,
+    SearchPageModule
   ],
   providers: [
     StatusBar,
