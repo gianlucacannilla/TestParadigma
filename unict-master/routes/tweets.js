@@ -88,7 +88,17 @@ checkValidation, function(req, res, next) {
         message: "Tweet not found"
       })
     }
+<<<<<<< HEAD
   
+=======
+    if (tweet._author.toString() !== res.locals.authInfo.userId) {
+      return res.status(401).json({
+        error: "Unauthorized",
+        message: "You are not the owner of the resource"
+      });
+    }
+   
+>>>>>>> parent of 0f1395d3... update
    tweet.likes =  tweet.likes + 1;
    tweet.users_likes.push(req.params.id2);
    
@@ -114,6 +124,12 @@ checkValidation, function(req, res, next) {
       return res.status(404).json({
         message: "Tweet not found"
       })
+    }
+    if (tweet._author.toString() !== res.locals.authInfo.userId) {
+      return res.status(401).json({
+        error: "Unauthorized",
+        message: "You are not the owner of the resource"
+      });
     }
    
    tweet.likes =  tweet.likes - 1;
