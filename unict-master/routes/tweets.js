@@ -88,12 +88,12 @@ checkValidation, function(req, res, next) {
         message: "Tweet not found"
       })
     }
-    if (tweet._author.toString() !== res.locals.authInfo.userId) {
+    /*if (tweet._author.toString() !== res.locals.authInfo.userId) {
       return res.status(401).json({
         error: "Unauthorized",
         message: "You are not the owner of the resource"
       });
-    }
+    }*/
    
    tweet.likes =  tweet.likes + 1;
    tweet.users_likes.push(req.params.id2);
