@@ -24,26 +24,14 @@
             <ion-grid>
                 <ion-row>
                   <ion-col>
-                      <ion-button expand="full" fill="clear"  (click)="pressLike(tweet)">
-                          <ion-icon  *ngIf="isLiked(tweet) else isNotLiked" slot="icon-only" class="pressed-heart" name="heart"  ></ion-icon> &nbsp; 
-                          
-                          <p style=color:red>{{tweet.likes}} </p>
-                          
-                          <ng-template #isNotLiked>
-                              <ion-icon   slot="icon-only" name="heart" class="unpressed" ></ion-icon> 
-                          </ng-template>
-                       </ion-button>
-                                          
+                      <ion-button expand="full" fill="clear" class="unpressed">
+                          <ion-icon slot="icon-only" name="heart"></ion-icon>
+                        </ion-button>                      
                   </ion-col>
                   <ion-col>
-                      <ion-button expand="full" fill="clear" (click)="pressFavorite(tweet)" >
-                          <ion-icon *ngIf="isFavorite(tweet) else isNotFavorite" class="pressed-bookmark" slot="icon-only" name="star"></ion-icon>&nbsp;
-                          <p style=color:sandybrown>{{tweet.favorites}} </p>
-                          <ng-template #isNotFavorite>
-                              <ion-icon   slot="icon-only" name="star" class="unpressed" ></ion-icon> 
-                          </ng-template>   
-                        </ion-button> 
-                                      
+                      <ion-button expand="full" fill="clear" class="unpressed" >
+                          <ion-icon slot="icon-only" name="star"></ion-icon>
+                        </ion-button>                     
                   </ion-col>
                   <ion-col>
                       <ion-button expand="full" fill="clear"  *ngIf="canEdit(tweet)" class="unpressed" (click)="createOrEditTweet(tweet)">

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const { check } = require('express-validator');
-const User = require('../models/user');
+
 const Tweet = require('../models/tweet');
 const autenticationMiddleware = require('../middlewares/auth');
 const { checkValidation } = require('../middlewares/validation');
@@ -126,18 +126,6 @@ checkValidation, function(req, res, next) {
   });
 });
 
-//ritorno preferiti utente
-router.get('/myfavorites/:id', function(req, res, next) {
-  User.findOne({_id:req.params.id})
-  .exec(function(err, user){
-       if (err) return res.status(500).json({error: err});
-       if(!user) return res.status(404).json({message: 'User not found'})
-
-       res.json(user.favorites);
-     });
- });
-
-
 //mostrare tutti i like di un tweet
 router.get('/showlikes/:id', function(req, res, next) {
   Tweet.findOne({_id:req.params.id})
@@ -162,9 +150,11 @@ checkValidation, function(req, res, next) {
       return res.status(404).json({
         message: "Tweet not found"
       })
-    } 
+    }
+   
    tweet.favorites =  tweet.favorites + 1;
-   tweet.users_favorites.push(req.params.id2);    
+   tweet.users_favorites.push(req.params.id2);
+   
    //tweet.update({_id: req.params.id},{ $inc: { likes: 1 } });
    tweet.save(function(err) {
     if(err) return res.status(500).json({error: err});
@@ -201,10 +191,8 @@ checkValidation, function(req, res, next) {
 });
 
 //ricerca tweet tramite hashtag  
-router.get('/showtweetsbytag/:id', function(req, res, next) {
-var hashtag = "#";
-hashtag += String(req.params.id);
-Tweet.find({hashtags:hashtag})
+router.post('/showtweetsbytag/', function(req, res, next) {
+Tweet.find({hashtags:req.body.hashtags})
   .populate("_author", "-password")
   .exec(function(err, tweet){
     //if (err) return res.status(500).json({error: err});

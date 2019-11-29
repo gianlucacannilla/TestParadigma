@@ -10,69 +10,45 @@
 </ion-header>
 
 <ion-content>
-
     <ion-list>
 
         <ion-item-sliding *ngFor="let tweet of commentTweets">
     
           <ion-item>
-
             <ion-label>
               <h2>{{tweet.tweet}}</h2>
+      
               <p *ngIf="tweet._author; else userDeleted" class="user" [class.me]="canEdit(tweet)">
                 {{ getAuthor(tweet) }} 
                 <ion-icon *ngIf="canEdit(tweet)" name="heart" color="danger-tint"></ion-icon> 
-                &nbsp;
-                <span style=color:grey> Likes: &nbsp; </span> <span style=color:red> {{tweet.likes}}</span> 
-                &nbsp;
-                <span style=color:grey> Favorites: &nbsp; </span> <span style=color:sandybrown> {{tweet.favorites}}</span> 
               </p>
-
               <ng-template #userDeleted>
                 <p class="user-deleted">User deleted</p>
               </ng-template>
       
             </ion-label>
-
            <!-- <ion-note slot="end">{{ tweet.created_at | unictDate: 1 }}</ion-note>--> 
           </ion-item>
       
           <ion-item-options *ngIf="canEdit(tweet)" side="end">
             
-            <ion-item-option *ngIf="isLiked(tweet) else isNotLiked"  class="pressed-heart"  (click)="pressLike(tweet)">
+            <ion-item-option color="danger" (click)="heartTweet(tweet)">
               <ion-icon slot="icon-only" name="heart"></ion-icon>
             </ion-item-option>
-            <ng-template #isNotLiked>
-                <ion-item-option   class="unpressed"  (click)="pressLike(tweet)">
-                    <ion-icon slot="icon-only" name="heart"></ion-icon>
-                </ion-item-option>
-            </ng-template>
-            <ion-item-option *ngIf="isFavorite(tweet) else isNotFavorited"  class="pressed-bookmark" (click)="pressFavorite(tweet)">
+            <ion-item-option color="warning" (click)="bookmarkTweet(tweet)">
                 <ion-icon slot="icon-only" name="star"></ion-icon>
             </ion-item-option>
-            <ng-template #isNotFavorited>
-                <ion-item-option   class="unpressed"  (click)="pressFavorite(tweet)">
-                    <ion-icon slot="icon-only" name="star"></ion-icon>
-                </ion-item-option>
-            </ng-template>
             <ion-item-option color="secondary" (click)="editComment(tweet)">
                 <ion-icon slot="icon-only" name="create"></ion-icon>
               </ion-item-option>
-
             <ion-item-option color="dark" (click)="deleteTweet(tweet)">
                   <ion-icon slot="icon-only" name="trash"></ion-icon>
              </ion-item-option>
           </ion-item-options>
-
         </ion-item-sliding>
     
       </ion-list>
-
-        
-</ion-content>
-
-<ion-footer>
-    <ion-grid>
+      <ion-grid>
         <ion-row>
           <ion-col size="9">
               <ion-item>
@@ -84,4 +60,6 @@
           </ion-col>
         </ion-row>
       </ion-grid>
-</ion-footer>
+     
+        
+</ion-content>

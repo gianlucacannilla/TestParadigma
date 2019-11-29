@@ -4,5 +4,4 @@ export interface User {
     name: string;
     surname: string;
     _id?: string;
-    favorites : Array<string>
 }
