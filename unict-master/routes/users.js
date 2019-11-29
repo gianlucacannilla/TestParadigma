@@ -109,6 +109,7 @@ router.put('/addfavorites/:id1/:id2', autenticationMiddleware.isAuth, function(r
       user[key] = request.body[key];
     }
     user.favorites.push(request.params.id2); 
+    
     user.save(function(err) {
       if(err) return response.status(500).json({error: err});
       response.json(user);
