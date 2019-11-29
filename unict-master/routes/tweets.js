@@ -149,7 +149,7 @@ router.get('/showlikes/:id', function(req, res, next) {
  });
 
  //aggiungere un preferito, id1-> tweet ,id2->utente loggato
-router.put('/addfavorites/:id1/:id2', autenticationMiddleware.isAuth, 
+router.put('/addfavorite/:id1/:id2', autenticationMiddleware.isAuth, 
 checkValidation, function(req, res, next) {
   Tweet.findOne({_id: req.params.id1}).exec(function(err, tweet) {
     if (err) {
@@ -163,12 +163,12 @@ checkValidation, function(req, res, next) {
         message: "Tweet not found"
       })
     }
-    if (tweet._author.toString() !== res.locals.authInfo.userId) {
+    /*if (tweet._author.toString() !== res.locals.authInfo.userId) {
       return res.status(401).json({
         error: "Unauthorized",
         message: "You are not the owner of the resource"
       });
-    }
+    }*/
    
    tweet.favorites =  tweet.favorites + 1;
    tweet.users_favorites.push(req.params.id2);
@@ -183,7 +183,7 @@ checkValidation, function(req, res, next) {
 
 
 //rimuovere un preferito, id1-> tweet ,id2->utente loggato
-router.put('/removefavorites/:id1/:id2', autenticationMiddleware.isAuth, 
+router.put('/removefavorite/:id1/:id2', autenticationMiddleware.isAuth, 
 checkValidation, function(req, res, next) {
   Tweet.findOne({_id: req.params.id1}).exec(function(err, tweet) {
     if (err) {
@@ -197,12 +197,12 @@ checkValidation, function(req, res, next) {
         message: "Tweet not found"
       })
     }
-    if (tweet._author.toString() !== res.locals.authInfo.userId) {
+    /*if (tweet._author.toString() !== res.locals.authInfo.userId) {
       return res.status(401).json({
         error: "Unauthorized",
         message: "You are not the owner of the resource"
       });
-    }
+    }*/
    
    tweet.favorites =  tweet.favorites - 1;
    tweet.users_favorites.pull(req.params.id2);
