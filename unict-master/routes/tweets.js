@@ -201,8 +201,10 @@ checkValidation, function(req, res, next) {
 });
 
 //ricerca tweet tramite hashtag  
-router.post('/showtweetsbytag/', function(req, res, next) {
-Tweet.find({hashtags:req.body.hashtags})
+router.get('/showtweetsbytag/:id', function(req, res, next) {
+var hashtag = "#";
+hashtag += String(req.params.id);
+Tweet.find({hashtags:hashtag})
   .populate("_author", "-password")
   .exec(function(err, tweet){
     //if (err) return res.status(500).json({error: err});
@@ -211,6 +213,7 @@ Tweet.find({hashtags:req.body.hashtags})
     res.json(tweet);
   })
 });
+
 
 
 router.put('/:id', autenticationMiddleware.isAuth, [
