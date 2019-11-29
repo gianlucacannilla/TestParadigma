@@ -4,6 +4,7 @@ const router = express.Router();
 const { check } = require('express-validator');
 
 const Tweet = require('../models/tweet');
+const User =  require('../models/tweet');
 const autenticationMiddleware = require('../middlewares/auth');
 const { checkValidation } = require('../middlewares/validation');
 
@@ -128,7 +129,6 @@ checkValidation, function(req, res, next) {
     }
    tweet.likes =  tweet.likes + 1;
    tweet.users_likes.push(req.params.id2);
-   
    //tweet.update({_id: req.params.id},{ $inc: { likes: 1 } });
    tweet.save(function(err) {
     if(err) return res.status(500).json({error: err});
@@ -272,6 +272,15 @@ router.delete('/:id', autenticationMiddleware.isAuth, function(req, res, next) {
     });
   });
 });
+//ritorno preferiti utente
+router.get('/myfavorites/:id', function(req, res, next) {
+  User.findOne({_id:req.params.id})
+  .exec(function(err, user){
+       if (err) return res.status(500).json({error: err});
+       if(!user) return res.status(404).json({message: 'User not found'})
 
+       res.json(user.favorites);
+     });
+ });
 
 module.exports = router;
